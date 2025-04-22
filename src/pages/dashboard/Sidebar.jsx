@@ -1,0 +1,106 @@
+import React, { useEffect } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logout, fetchUser } from "../../redux/authSlice";
+import "./Sidebar.css";
+
+const Sidebar = ({ isOpen, onItemClick }) => {
+  const { user, isAuthenticated, loading } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated && !user && !loading) {
+      dispatch(fetchUser());
+    }
+  }, [isAuthenticated, user, loading, dispatch]);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/auth-Container");
+  };
+
+  const menuItems = [
+    { name: "Dashboard", path: "/dashboard" },
+    { name: "Job Listings", path: "/job-listings" },
+    { name: "My Applications", path: "/my-applications" },
+    { name: "CDC Trainings", path: "/cdc-trainings" },
+    { name: "Profile", path: "/profile" },
+    ...(user?.role === "admin"
+      ? [{ name: "Admin Dashboard", path: "/admin-mgmnt" }]
+      : []),
+  ];
+
+  return (
+    <div className={`sidebar-container ${isOpen ? "open" : "closed"}`}>
+      {/* Hamburger Icon when closed */}
+      {!isOpen && (
+        <div className="hamburger-icon" onClick={onItemClick}>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      )}
+
+      {/* Sidebar Content */}
+      <div className="sidebar-content">
+        {/* Close Button when open */}
+        {isOpen && (
+          <button className="close-btn" onClick={onItemClick}>
+            ✕
+          </button>
+        )}
+
+        <nav className="sidebar-nav">
+          <ul className="menu-list">
+            <li className="user-info">
+              {loading ? (
+                <p>Loading...</p>
+              ) : (
+                <>
+                  <div className="profile-pic">
+                    <img
+                      className="profile-img"
+                      src={
+                        user?.profilePhoto
+                          ? user.profilePhoto.startsWith("http")
+                            ? user.profilePhoto
+                            : `${import.meta.env.VITE_BACKEND_URL.replace(/\/$/, '')}/${user.profilePhoto.replace(/^\/+/, '')}`
+                          : "/default-avatar.png"
+                      }
+                      alt="Profile"
+                      onError={(e) => (e.target.src = "/default-avatar.png")}
+                    />
+                  </div>
+                  <p>Hi, {user?.fullName || "User"} 👋</p>
+                </>
+              )}
+            </li>
+
+            {/* Sidebar Menu */}
+            {menuItems.map((item) => (
+              <li key={item.name} className="menu-item">
+                <NavLink
+                  to={item.path}
+                  className={({ isActive }) => (isActive ? "active" : "")}
+                  onClick={onItemClick}
+                >
+                  {item.name}
+                </NavLink>
+              </li>
+            ))}
+
+            {/* Logout Button */}
+            <li className="menu-item logout">
+              <button className="logout-btn" onClick={handleLogout}>
+                Logout
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  );
+};
+
+export default Sidebar;

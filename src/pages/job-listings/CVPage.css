@@ -1,0 +1,286 @@
+/* ATS Score Checker Styles */
+.cv-insights-page-container {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  color: #333;
+}
+
+.cv-insights-upload-form,
+.results-container {
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: #f5f5f5;
+}
+
+.input-group {
+  margin-bottom: 15px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.input-group input[type="file"],
+.cv-insights-textarea,
+.cv-insights-industry-dropdown {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.cv-insights-textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+.cv-insights-submit-button {
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.cv-insights-submit-button:hover {
+  background-color: #1a252f;
+}
+
+.cv-insights-submit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Score Circle */
+.score-container {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.score-circle {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  position: relative;
+}
+
+.score-inner-circle {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+}
+
+.score-value {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+/* Factor Scores */
+.factor-scores {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.factor-score {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 5px;
+  background-color: white;
+}
+
+.progress-bar {
+  height: 8px;
+  background-color: #f1f1f1;
+  border-radius: 4px;
+  margin-top: 5px;
+}
+
+.progress {
+  height: 100%;
+  background-color: #4CAF50;
+  border-radius: 4px;
+}
+
+/* Recommendations */
+.recommendations-container {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+.recommendations-list {
+  list-style-type: none;
+  padding-left: 5px;
+}
+
+.recommendations-list li {
+  margin-bottom: 10px;
+  padding-left: 20px;
+  position: relative;
+}
+
+.priority-high {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+.priority-medium {
+  color: #ff9800;
+}
+
+.priority-low {
+  color: #2196f3;
+}
+
+.category-tag {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-right: 8px;
+  background-color: #e0e0e0;
+}
+
+/* Keywords */
+.keywords-container {
+  margin-top: 20px;
+}
+
+.keywords-list {
+  margin-top: 10px;
+}
+
+.keyword {
+  display: inline-block;
+  background-color: #e1f5fe;
+  padding: 3px 8px;
+  border-radius: 12px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+/* Format Issues */
+.format-issues-container {
+  color: #d32f2f;
+  margin-top: 20px;
+}
+
+.format-issues-list {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+/* Loading and Error States */
+.loading {
+  text-align: center;
+  padding: 40px;
+}
+
+.spinner {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.cv-insights-message-banner,
+.cv-insights-error-banner {
+  padding: 10px 15px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cv-insights-message-banner {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.cv-insights-error-banner {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.cv-insights-close-button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 5px;
+}
+
+.cv-insights-upload-progress {
+  margin-top: 15px;
+}
+
+.cv-insights-progress-bar {
+  height: 8px;
+  background-color: #f1f1f1;
+  border-radius: 4px;
+  margin-bottom: 5px;
+}
+
+.cv-insights-progress-bar-fill {
+  height: 100%;
+  background-color: #3498db;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.empty-message {
+  text-align: center;
+  color: #757575;
+  font-style: italic;
+  padding: 10px;
+}
+
+.cv-insights-file-upload-button {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #2c3e50;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.cv-insights-file-upload-button:hover {
+  background-color: #1a252f;
+}
+
+.cv-insights-file-upload-button input[type="file"] {
+  display: none;
+}

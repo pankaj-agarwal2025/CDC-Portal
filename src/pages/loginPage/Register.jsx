@@ -62,71 +62,79 @@ const Signup = () => {
   };
 
   return (
-    <div className="signup-container">
-      <div className="signup-card">
-        <h1 className="signup-title">Create Account</h1>
-        {success ? (
-          <div className="signup-success">{success}</div>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <input
-                type="text"
-                name="fullName"
-                placeholder="Full Name"
-                value={formData.fullName}
-                onChange={handleChange}
-                required
-                className="form-input"
-              />
-            </div>
-            <div className="form-group">
-              <input
-                type="text"
-                name="rollNo"
-                placeholder="Roll No"
-                value={formData.rollNo}
-                onChange={handleChange}
-                required
-                className="form-input"
-              />
-            </div>
-            <div className="form-group">
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="form-input"
-              />
-            </div>
-            <div className="form-group">
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className="form-input"
-              />
-            </div>
-            {error && (
-              <div className="signup-error">{error}</div>
-            )}
-            <button
-              type="submit"
-              disabled={loading}
-              className={`signup-button ${loading ? 'disabled' : ''}`}
-            >
-              {loading ? "Signing Up..." : "Sign Up"}
-            </button>
-          </form>
-        )}
-      </div>
-    </div>
+    <>
+      {success ? (
+        <div className="success-message">{success}</div>
+      ) : (
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="fullName" className="form-label">Full Name</label>
+            <input
+              id="fullName"
+              type="text"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              placeholder="Enter your full name"
+              className="form-input"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="rollNo" className="form-label">Roll Number</label>
+            <input
+              id="rollNo"
+              type="text"
+              name="rollNo"
+              value={formData.rollNo}
+              onChange={handleChange}
+              placeholder="Enter your roll number"
+              className="form-input"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="signup-email" className="form-label">Email</label>
+            <input
+              id="signup-email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Enter your email"
+              className="form-input"
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="signup-password" className="form-label">Password</label>
+            <input
+              id="signup-password"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Create a password"
+              className="form-input"
+              required
+            />
+          </div>
+          
+          {error && <div className="error-message">{error}</div>}
+          
+          <button 
+            type="submit" 
+            className="btn btn-primary btn-full" 
+            disabled={loading}
+          >
+            {loading ? "Creating Account..." : "Sign Up"}
+          </button>
+        </form>
+      )}
+    </>
   );
 };
 

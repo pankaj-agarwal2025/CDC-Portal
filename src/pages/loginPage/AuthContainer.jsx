@@ -5,43 +5,58 @@ import Signup from "./Register";
 import Navbar from "../../layouts/Navbar";
 
 const AuthContainer = () => {
-  const [isSignUp, setIsSignUp] = useState(false);
-
-  const toggleAuth = () => {
-    setIsSignUp(!isSignUp);
-  };
+  const [activeTab, setActiveTab] = useState("login");
 
   return (
     <>
       <Navbar />
       <div className="auth-container">
-        <div
-          className={`container ${isSignUp ? "right-panel-active" : ""}`}
-          id="container"
-        >
-          <div className="form-container sign-up-container">
-            <Signup />
+        <div className="auth-card">
+          <div className="auth-tabs">
+            <button 
+              className={`auth-tab ${activeTab === "login" ? "active" : ""}`}
+              onClick={() => setActiveTab("login")}
+            >
+              Login
+            </button>
+            <button 
+              className={`auth-tab ${activeTab === "signup" ? "active" : ""}`}
+              onClick={() => setActiveTab("signup")}
+            >
+              Sign Up
+            </button>
           </div>
-          <div className="form-container sign-in-container">
-            <Login />
-          </div>
-          <div className="overlay-container">
-            <div className="overlay">
-              <div className="overlay-panel overlay-left">
-                <h1>Welcome Back!</h1>
-                <p>To keep connected with us please login with your personal info</p>
-                <button className="ghost" onClick={() => setIsSignUp(false)}>
-                  Sign In
-                </button>
-              </div>
-              <div className="overlay-panel overlay-right">
-                <h1>Hi!</h1>
-                <p>Don't have an account yet? then start by clicking below</p>
-                <button className="ghost" onClick={() => setIsSignUp(true)}>
-                  Sign Up
-                </button>
-              </div>
-            </div>
+          
+          <div className="auth-form-container">
+            {activeTab === "login" ? (
+              <>
+                <h1 className="auth-title">Welcome Back</h1>
+                <Login />
+                <div className="auth-extra">
+                  Don't have an account?{" "}
+                  <button 
+                    className="auth-link" 
+                    onClick={() => setActiveTab("signup")}
+                  >
+                    Create one now
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <h1 className="auth-title">Create Account</h1>
+                <Signup />
+                <div className="auth-extra">
+                  Already have an account?{" "}
+                  <button 
+                    className="auth-link" 
+                    onClick={() => setActiveTab("login")}
+                  >
+                    Login here
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

@@ -76,37 +76,56 @@ const Login = () => {
   };
 
   return (
-    <div className="form-content">
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="Email"
-        />
-        <input
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Password"
-        />
-        <button type="submit" disabled={loading}>
+    <>
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="email" className="form-label">Email</label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Enter your email"
+            className="form-input"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password" className="form-label">Password</label>
+          <input
+            id="password"
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Enter your password"
+            className="form-input"
+            required
+          />
+        </div>
+        
+        {error && <div className="error-message">{error}</div>}
+        {resendEmailSuccess && <div className="success-message">{resendEmailSuccess}</div>}
+        
+        <button 
+          type="submit" 
+          className="btn btn-primary btn-full" 
+          disabled={loading}
+        >
           {loading ? "Logging in..." : "Login"}
         </button>
+        
+        <button
+          type="button"
+          onClick={handleResendVerificationEmail}
+          className="btn btn-secondary btn-full"
+          disabled={resendEmailLoading}
+        >
+          {resendEmailLoading ? "Sending..." : "Resend Verification Email"}
+        </button>
       </form>
-      {error && <div className="error-message">{error}</div>}
-      <button
-        className="ghost"
-        onClick={handleResendVerificationEmail}
-        disabled={resendEmailLoading}
-      >
-        {resendEmailLoading ? "Sending..." : "Resend Verification Email"}
-      </button>
-      {resendEmailSuccess && <div className="success-message">{resendEmailSuccess}</div>}
-    </div>
+    </>
   );
 };
 

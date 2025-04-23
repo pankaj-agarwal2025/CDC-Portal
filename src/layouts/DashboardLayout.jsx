@@ -38,7 +38,7 @@ const DashboardLayout = ({ children }) => {
           >
             <Menu size={20} />
           </button>
-          <h1 className="portal-title">CampusConnect - {currentPage}</h1>
+          <h1 className="portal-title">Student - {currentPage}</h1>
         </header>
         {children}
       </div>

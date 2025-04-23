@@ -23,8 +23,8 @@
   position: relative;
   overflow: hidden;
   width: 100%;
-  max-width: 1300px;
-  min-height: 480px;
+  max-width: 1200px;
+  min-height: 550px;
 }
 
 .auth-container .form-container {

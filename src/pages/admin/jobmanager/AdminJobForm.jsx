@@ -103,11 +103,46 @@ const AdminJobForm = ({ formMode, initialData, onSubmit, onCancel }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (skillInput.trim()) handleAddSkills();
-    onSubmit(formData);
-  };
+  // In AdminJobForm.js
+const handleSubmit = (e) => {
+  e.preventDefault();
+
+  // Validate required fields
+  const requiredFields = [
+    "companyName",
+    "officeAddress",
+    "website",
+    "yearOfEstablishment",
+    "contactPersonName",
+    "contactNumber",
+    "email",
+    "profiles",
+    "eligibility",
+    "vacancies",
+    "offerType",
+    "ctcOrStipend",
+    "location",
+    "resultDeclaration",
+    "dateOfJoining",
+    "reference",
+    "skills",
+    "category",
+  ];
+
+  const missingFields = requiredFields.filter(
+    (field) =>
+      !formData[field] ||
+      (Array.isArray(formData[field]) && formData[field].length === 0)
+  );
+
+  if (missingFields.length > 0) {
+    alert(`Please fill in the following required fields: ${missingFields.join(", ")}`);
+    return;
+  }
+
+  if (skillInput.trim()) handleAddSkills();
+  onSubmit(formData, formMode); // Pass formMode to onSubmit
+};
 
   useEffect(() => {
     const handleClickOutside = (event) => {

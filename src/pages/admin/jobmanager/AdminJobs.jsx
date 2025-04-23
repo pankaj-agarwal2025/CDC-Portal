@@ -8,6 +8,7 @@ const AdminJobManagement = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedJobs, setSelectedJobs] = useState([]);
+  const [successMessage, setSuccessMessage] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [formMode, setFormMode] = useState("create");
@@ -262,19 +263,58 @@ const AdminJobManagement = () => {
     setCurrentJob(null);
   };
 
-  const handleFormSubmit = (jobData, mode) => {
-    if (mode === "create") {
-      setJobs([jobData, ...jobs]);
-    } else {
-      setJobs(jobs.map((job) => (job._id === jobData._id ? jobData : job)));
+  const handleFormSubmit = async (jobData, mode) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (mode === "create") {
+        const response = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/jobs`,
+          jobData,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setJobs([response.data.data, ...jobs]);
+        if (response.data.data.status === "approved") {
+          setSuccessMessage("Job created and email notifications sent to students.");
+        }
+      } else {
+        const response = await axios.put(
+          `${import.meta.env.VITE_BACKEND_URL}/jobs/${jobData._id}`,
+          jobData,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setJobs(jobs.map((job) => (job._id === jobData._id ? response.data.data : job)));
+      }
+      setError(null);
+      closeModal();
+    } catch (err) {
+      let errorMessage = "Failed to save job";
+      if (err.response?.data?.errors) {
+        errorMessage = err.response.data.errors.join(", ");
+      } else if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      }
+      setError(errorMessage);
+      console.error("Error saving job:", err);
     }
-    closeModal();
   };
 
   return (
     <div className="admin-job-management">
       <h2>Job Management Dashboard</h2>
-      {error && <div className="error-message">{error}</div>}
+      {error && (
+        <div className="error-message" style={{ color: "red", marginBottom: "10px" }}>
+          {error}
+        </div>
+      )}
+      {successMessage && (
+        <div className="success-message" style={{ color: "green", marginBottom: "10px" }}>
+          {successMessage}
+        </div>
+      )}
 
       <div className="control-panel">
         <button className="create-button" onClick={openCreateModal}>

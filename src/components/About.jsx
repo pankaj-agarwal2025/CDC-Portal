@@ -26,16 +26,16 @@ function About() {
         <div className="about-dev">
           <h2>Who Developed It?</h2>
           <p>
-            <strong>Khushnam Chauhan</strong> is the full-stack developer behind CampusConnect. With
+            <strong>Khushnam Chauhan (MCA Batch 2023-25)</strong> is the full-stack developer behind CampusConnect. With
             expertise in the MERN stack, Khushnam developed the entire platform interface, backend
             services, and dynamic features to create a seamless experience for students and admins alike.
           </p>
         </div>
 
         <div className="about-dev">
-          <h2>AI & Resume Insights by Apoorva Sharma</h2>
+          <h3>AI & Resume Insights by Apoorva Sharma</h3>
           <p>
-            <strong>Apoorva Sharma</strong> is an AI/ML enthusiast and skilled data analyst who developed
+            <strong>Apoorva Sharma (MCA Batch 2023-25)</strong> is an AI/ML enthusiast and skilled data analyst who developed
             and integrated the intelligent <em>Resume Insights</em> feature. This model helps analyze
             uploaded resumes and provides feedback to students to improve their chances during placements.
             Her contribution added a smart and scalable dimension to CampusConnect, making it more than just

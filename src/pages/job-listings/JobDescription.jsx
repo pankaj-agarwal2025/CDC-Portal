@@ -63,7 +63,13 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
       return;
     }
 
-    console.log("Form Data:", formData);
+    console.log("Submitting Form Data:", {
+      jobId: job._id,
+      fullName: formData.fullName,
+      email: formData.email,
+      phone: formData.phone,
+      resume: formData.resume ? formData.resume.name : null,
+    });
 
     const data = new FormData();
     data.append("jobId", job._id);
@@ -81,9 +87,18 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
         body: data,
       });
 
-      const result = await response.json();
+      const text = await response.text();
+      console.log("Raw response:", text);
+
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch (error) {
+        throw new Error("Invalid JSON response from server");
+      }
+
       if (!response.ok) {
-        throw new Error(result.message || "Application failed");
+        throw new Error(result.message || `Server error: ${response.status}`);
       }
 
       setSubmitStatus("success");
@@ -94,7 +109,7 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
     } catch (error) {
       console.error("Error submitting application:", error);
       setSubmitStatus("error");
-      setFormErrors({ general: error.message || "Failed to submit application" });
+      setFormErrors({ general: error.message || "Failed to submit application. Please try again." });
     }
   };
 

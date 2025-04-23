@@ -23,7 +23,7 @@
   position: relative;
   overflow: hidden;
   width: 100%;
-  max-width: 900px;
+  max-width: 1300px;
   min-height: 480px;
 }
 
@@ -91,7 +91,7 @@
 .auth-container button {
   border-radius: 20px;
   border: 1px solid #ff4b2b;
-  background-color: #731fd9;
+  background-color: rgb(15, 148, 15);
   color: #ffffff;
   font-size: 14px;
   font-weight: bold;
@@ -103,7 +103,7 @@
 }
 
 .auth-container button:hover {
-  background-color: #7058f8;
+  background-color: green;
 }
 
 .auth-container button.ghost {
@@ -131,7 +131,7 @@
 }
 
 .auth-container .overlay {
-  background: linear-gradient(to right, #350483, #b941ff);
+  background: linear-gradient(to right, green, rgb(29, 159, 29));
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 0 0;

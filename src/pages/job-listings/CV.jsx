@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import './CVPage.css';
-
 export default function CVInsightsPage() {
   const [reviewData, setReviewData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -10,19 +9,26 @@ export default function CVInsightsPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [industry, setIndustry] = useState('software');
   const [jobDescription, setJobDescription] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
 
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedFile) {
+      setError('Please select a file first.');
+      return;
+    }
 
     const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-    if (!allowedTypes.includes(file.type)) {
+    if (!allowedTypes.includes(selectedFile.type)) {
       setError('Please upload a PDF or Word document.');
       return;
     }
 
     const formData = new FormData();
-    formData.append('resume', file);
+    formData.append('resume', selectedFile);
     formData.append('industry', industry);
     if (jobDescription.trim()) {
       formData.append('job_description', jobDescription);
@@ -53,8 +59,8 @@ export default function CVInsightsPage() {
 
       clearInterval(progressInterval);
       setUploadProgress(100);
-
       const result = await response.json();
+
       if (result.success) {
         setReviewData(result);
         setMessage('Resume analyzed successfully!');
@@ -206,40 +212,34 @@ export default function CVInsightsPage() {
       </div>
     );
   };
-
   return (
     <div className="cv-insights-page-container">
-
       {message && (
         <div className="cv-insights-message-banner">
           {message}
           <button className="cv-insights-close-button" onClick={() => setMessage('')}>×</button>
         </div>
       )}
-
       {error && (
         <div className="cv-insights-error-banner">
           {error}
           <button className="cv-insights-close-button" onClick={() => setError(null)}>×</button>
         </div>
       )}
-
       {!reviewData && (
         <div className="cv-insights-upload-form">
           <h3>Upload Your Resume</h3>
           <p>Optimize your resume to pass through Applicant Tracking Systems and get seen by recruiters.</p>
-
           <div className="input-group">
             <label htmlFor="resume">Upload Resume (PDF format recommended)</label>
             <input
               type="file"
               id="resume"
               accept=".pdf,.doc,.docx"
-              onChange={handleFileUpload}
+              onChange={handleFileChange}
               disabled={isUploading}
             />
           </div>
-
           <div className="input-group">
             <label htmlFor="job-description">Job Description (Optional)</label>
             <textarea
@@ -250,7 +250,6 @@ export default function CVInsightsPage() {
               className="cv-insights-textarea"
             />
           </div>
-
           <div className="input-group">
             <label htmlFor="industry">Target Industry</label>
             <select
@@ -269,15 +268,13 @@ export default function CVInsightsPage() {
               <option value="data_science">Data Science</option>
             </select>
           </div>
-
           <button 
             className="cv-insights-submit-button" 
-            onClick={() => document.getElementById('resume').click()}
-            disabled={isUploading}
+            onClick={handleSubmit}
+            disabled={isUploading || !selectedFile}
           >
             Check ATS Score
           </button>
-
           {isUploading && (
             <div className="cv-insights-upload-progress">
               <div className="cv-insights-progress-bar">
@@ -291,14 +288,12 @@ export default function CVInsightsPage() {
           )}
         </div>
       )}
-
       {loading && (
         <div className="loading">
           <div className="spinner"></div>
           <p>Analyzing your resume... Please wait.</p>
         </div>
       )}
-
       {reviewData && (
         <div className="results-container">
           <h2>Your ATS Score Results</h2>
@@ -325,10 +320,17 @@ export default function CVInsightsPage() {
               <input
                 type="file"
                 accept=".pdf,.doc,.docx"
-                onChange={handleFileUpload}
+                onChange={handleFileChange}
                 disabled={isUploading}
               />
             </label>
+            <button 
+              className="cv-insights-submit-button"
+              onClick={handleSubmit}
+              disabled={isUploading || !selectedFile}
+            >
+              Analyze New Resume
+            </button>
           </div>
         </div>
       )}

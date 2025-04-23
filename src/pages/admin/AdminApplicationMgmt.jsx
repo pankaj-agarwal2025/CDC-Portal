@@ -8,10 +8,11 @@ const AdminApplicationManagement = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   const [selectedApps, setSelectedApps] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: "appliedDate", direction: "desc" });
   const [modalApp, setModalApp] = useState(null);
-  const API_URL = import.meta.env.VITE_BACKEND_URL; // http://localhost:3000/api
+  const API_URL = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
     loadJobs();
@@ -21,10 +22,10 @@ const AdminApplicationManagement = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`${API_URL}/applications/jobs`, { 
+      const response = await axios.get(`${API_URL}/applications/jobs`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setJobs(Array.isArray(response.data) ? response.data : []); 
+      setJobs(Array.isArray(response.data) ? response.data : []);
       setError(null);
     } catch (err) {
       setError("Failed to load jobs: " + (err.response?.data?.message || err.message));
@@ -38,7 +39,7 @@ const AdminApplicationManagement = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`${API_URL}/applications/applications/${jobId}`, { 
+      const response = await axios.get(`${API_URL}/applications/applications/${jobId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setApplications(Array.isArray(response.data) ? response.data : []);
@@ -57,14 +58,16 @@ const AdminApplicationManagement = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.put(
-        `${API_URL}/applications/applications/${appId}`, 
+        `${API_URL}/applications/applications/${appId}`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setApplications(applications.map(app => (app._id === appId ? response.data : app)));
       if (modalApp && modalApp._id === appId) setModalApp(response.data);
+      setSuccessMessage(`Status updated to ${newStatus}. Email sent to applicant.`);
+      setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
-      setError(`Failed to update status to ${newStatus}.`);
+      setError(`Failed to update status to ${newStatus}: ${err.response?.data?.message || err.message}`);
       console.error("Error updating status:", err);
     }
   };
@@ -73,17 +76,19 @@ const AdminApplicationManagement = () => {
     if (window.confirm("Are you sure you want to delete this application?")) {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`${API_URL}/applications/applications/${appId}`, { 
+        await axios.delete(`${API_URL}/applications/applications/${appId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setApplications(applications.filter(app => app._id !== appId));
         setSelectedApps(selectedApps.filter(id => id !== appId));
         if (modalApp && modalApp._id === appId) setModalApp(null);
-        setJobs(jobs.map(job => 
+        setJobs(jobs.map(job =>
           job._id === selectedJob._id ? { ...job, applicationCount: job.applicationCount - 1 } : job
         ));
+        setSuccessMessage("Application deleted successfully.");
+        setTimeout(() => setSuccessMessage(null), 3000);
       } catch (err) {
-        setError("Failed to delete application.");
+        setError("Failed to delete application: " + (err.response?.data?.message || err.message));
         console.error("Error deleting application:", err);
       }
     }
@@ -105,18 +110,20 @@ const AdminApplicationManagement = () => {
         const token = localStorage.getItem("token");
         await Promise.all(
           selectedApps.map(id =>
-            axios.delete(`${API_URL}/applications/applications/${id}`, { // No extra /api
+            axios.delete(`${API_URL}/applications/applications/${id}`, {
               headers: { Authorization: `Bearer ${token}` },
             })
           )
         );
         setApplications(applications.filter(app => !selectedApps.includes(app._id)));
-        setJobs(jobs.map(job => 
+        setJobs(jobs.map(job =>
           job._id === selectedJob._id ? { ...job, applicationCount: job.applicationCount - selectedApps.length } : job
         ));
         setSelectedApps([]);
+        setSuccessMessage(`${selectedApps.length} applications deleted successfully.`);
+        setTimeout(() => setSuccessMessage(null), 3000);
       } catch (err) {
-        setError("Failed to delete some applications.");
+        setError("Failed to delete some applications: " + (err.response?.data?.message || err.message));
         console.error("Error bulk deleting:", err);
       }
     }
@@ -157,7 +164,8 @@ const AdminApplicationManagement = () => {
 
   return (
     <div className="admin-application-management1">
-      {error && <div className="error-message">{error}</div>}
+      {error && <div className="error-message" style={{ color: "red", marginBottom: "10px" }}>{error}</div>}
+      {successMessage && <div className="success-message" style={{ color: "green", marginBottom: "10px" }}>{successMessage}</div>}
 
       {!selectedJob ? (
         <>

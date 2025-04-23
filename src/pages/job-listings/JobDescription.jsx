@@ -10,10 +10,12 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
     resume: null,
   });
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
 
   const handleApplyClick = () => {
     setIsApplying(true);
-    setSubmitStatus(null); // Reset status on new apply attempt
+    setSubmitStatus(null);
+    setFormErrors({});
   };
 
   const formatDate = (dateString) => {
@@ -23,7 +25,9 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
 
   const handleCloseApplyForm = () => {
     setIsApplying(false);
-    setFormData({ fullName: "", email: "", phone: "", resume: null }); // Reset form
+    setFormData({ fullName: "", email: "", phone: "", resume: null });
+    setFormErrors({});
+    setSubmitStatus(null);
   };
 
   const handleInputChange = (e) => {
@@ -33,50 +37,74 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
     } else {
       setFormData({ ...formData, [name]: value });
     }
+    setFormErrors({ ...formErrors, [name]: "" });
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.fullName.trim()) errors.fullName = "Full name is required";
+    if (!formData.email.trim()) errors.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) errors.email = "Invalid email format";
+    if (!formData.phone.trim()) errors.phone = "Phone number is required";
+    else if (!/^\d{10}$/.test(formData.phone)) errors.phone = "Phone number must be 10 digits";
+    if (!formData.resume) errors.resume = "Resume is required";
+    else if (!["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(formData.resume.type)) {
+      errors.resume = "Resume must be PDF, DOC, or DOCX";
+    }
+    return errors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.fullName || !formData.email || !formData.phone || !formData.resume) {
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
       setSubmitStatus("error");
       return;
     }
-  
+
+    console.log("Form Data:", formData);
+
     const data = new FormData();
     data.append("jobId", job._id);
     data.append("fullName", formData.fullName);
     data.append("email", formData.email);
     data.append("phone", formData.phone);
     data.append("resume", formData.resume);
-  
+
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/applications`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // Assuming token-based auth
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: data,
       });
-      if (!response.ok) throw new Error("Application failed");
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.message || "Application failed");
+      }
+
       setSubmitStatus("success");
       setTimeout(() => {
         handleCloseApplyForm();
+        onApply?.();
       }, 2000);
     } catch (error) {
       console.error("Error submitting application:", error);
       setSubmitStatus("error");
+      setFormErrors({ general: error.message || "Failed to submit application" });
     }
   };
 
   return (
     <div className="job-description-overlay">
       <div className="job-description__container">
-        {/* Close Button */}
         <button className="job-description__close-btn" onClick={onClose}>
           ×
         </button>
 
-        {/* Header: Position + Company Logo + Name */}
         <div className="job-description__header2">
           <h1 className="job-title-head2">{job.profiles}</h1>
           <div className="job-header-details2">
@@ -92,7 +120,6 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
           </div>
         </div>
 
-        {/* Highlighted Details */}
         <div className="jd-layout">
           <div className="job-description__details2">
             <div className="job-info2">
@@ -113,14 +140,14 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
             </div>
           </div>
           <div className="job-description__details2">
-          <div className="job-info2">
-                <span>👤 Referred by:</span>
-                <p>
-                  {job.reference && job.reference !== "Self" 
-                    ? job.reference 
-                    : `${job.contactPersonName} (${job.email})`}
-                </p>
-              </div>
+            <div className="job-info2">
+              <span>👤 Referred by:</span>
+              <p>
+                {job.reference && job.reference !== "Self"
+                  ? job.reference
+                  : `${job.contactPersonName} (${job.email})`}
+              </p>
+            </div>
             <div className="job-info2">
               <span>Category:</span>
               <p>{job.category.join(", ")}</p>
@@ -132,7 +159,6 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
           </div>
         </div>
 
-        {/* Full Description */}
         <div className="job-description__body2">
           <h2>Job Description</h2>
           <p>{job.jobDescription}</p>
@@ -151,7 +177,6 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
           </div>
         </div>
 
-        {/* Apply Button */}
         {!isAdmin && (
           <div className="job-description__footer">
             <button className="job-description__apply-btn" onClick={handleApplyClick}>
@@ -164,49 +189,58 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
         )}
       </div>
 
-      {/* Application Form Modal */}
       {isApplying && (
         <div className="apply-form-overlay">
           <div className="apply-form-container">
-            <h2>Applied for {job.profiles}</h2>
+            <h2>Apply for {job.profiles}</h2>
             {submitStatus === "success" ? (
               <p className="success-msg">Application submitted successfully! 🎉</p>
             ) : (
               <form onSubmit={handleSubmit}>
-                <input
-                  type="text"
-                  name="fullName"
-                  placeholder="Full Name"
-                  value={formData.fullName}
-                  onChange={handleInputChange}
-                  required
-                />
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                />
-                <input
-                  type="tel"
-                  name="phone"
-                  placeholder="Phone Number"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  required
-                />
-                <input
-                  type="file"
-                  name="resume"
-                  accept=".pdf,.doc,.docx"
-                  onChange={handleInputChange}
-                  required
-                />
-                {submitStatus === "error" && (
-                  <p className="error-msg">Please fill all fields correctly!</p>
-                )}
+                <div className="form-field">
+                  <input
+                    type="text"
+                    name="fullName"
+                    placeholder="Full Name"
+                    value={formData.fullName}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  {formErrors.fullName && <p className="error-msg">{formErrors.fullName}</p>}
+                </div>
+                <div className="form-field">
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  {formErrors.email && <p className="error-msg">{formErrors.email}</p>}
+                </div>
+                <div className="form-field">
+                  <input
+                    type="tel"
+                    name="phone"
+                    placeholder="Phone Number"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  {formErrors.phone && <p className="error-msg">{formErrors.phone}</p>}
+                </div>
+                <div className="form-field">
+                  <input
+                    type="file"
+                    name="resume"
+                    accept=".pdf,.doc,.docx"
+                    onChange={handleInputChange}
+                    required
+                  />
+                  {formErrors.resume && <p className="error-msg">{formErrors.resume}</p>}
+                </div>
+                {formErrors.general && <p className="error-msg">{formErrors.general}</p>}
                 <div className="form-actions">
                   <button type="submit">Submit Application</button>
                   <button type="button" onClick={handleCloseApplyForm}>

@@ -320,6 +320,7 @@ const JobPostForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
+    // Process skills input
     if (skillInput.trim()) {
       const newSkills = skillInput
         .split(",")
@@ -351,7 +352,7 @@ const JobPostForm = () => {
         profiles: formData.profiles,
         eligibility: formData.eligibility,
         vacancies: Number.parseInt(formData.vacancies),
-        offerType: formData.offerType, // Array, e.g., ["Full time Employment", "Internship + PPO"]
+        offerType: formData.offerType,
         ctcOrStipend: formData.ctcOrStipend,
         location: formData.location,
         resultDeclaration: formData.resultDeclaration,
@@ -364,12 +365,27 @@ const JobPostForm = () => {
         category: formData.category,
       };
   
+      // Get the authentication token from localStorage
+      const token = localStorage.getItem('token');
+      
+      // Set up headers with or without auth token
+      const headers = {
+        "Content-Type": "application/json"
+      };
+      
+      // Add authorization header if token exists
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
   
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/jobs`, {
+      // Use different endpoint based on authentication status
+      const endpoint = token 
+        ? `${import.meta.env.VITE_BACKEND_URL}/jobs` 
+        : `${import.meta.env.VITE_BACKEND_URL}/jobs/public`;
+  
+      const response = await fetch(endpoint, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers,
         body: JSON.stringify(processedData),
       });
   
@@ -388,7 +404,7 @@ const JobPostForm = () => {
           profiles: "",
           eligibility: "",
           vacancies: 1,
-          offerType: [], // Reset to empty array
+          offerType: [],
           ctcOrStipend: "",
           location: "",
           resultDeclaration: "Same day",

@@ -59,11 +59,11 @@ const MyApplications = () => {
           <tbody>
             {applications.map((app) => (
               <tr key={app._id} className={`status-${app.status.toLowerCase()}`}>
-                <td>{app.jobId.profiles}</td>
-                <td>{app.jobId.companyName}</td>
-                <td>{app.jobId.ctcOrStipend}</td>
-                <td>{app.jobId.location}</td>
-                <td>{app.jobId.offerType.join(", ")}</td>
+                <td>{app.jobId?.profiles || "No longer available"}</td>
+                <td>{app.jobId?.companyName || "No longer available"}</td>
+                <td>{app.jobId?.ctcOrStipend || "N/A"}</td>
+                <td>{app.jobId?.location || "N/A"}</td>
+                <td>{app.jobId?.offerType ? app.jobId.offerType.join(", ") : "N/A"}</td>
                 <td>{app.status}</td>
                 <td>{formatDate(app.appliedDate)}</td>
               </tr>

@@ -1,24 +1,22 @@
+// src/pages/studentform/UploadsSection.jsx
 import React from "react";
 
 const UploadsSection = ({ formData, handleChange, API_URL }) => {
   const getImageUrl = (fileData) => {
     if (!fileData) return null;
-  
-    // If it's already a URL (containing http), we need to parse and fix it
+
+    // If it's a string (Cloudinary URL or existing path)
     if (typeof fileData === "string") {
-      if (fileData.startsWith("http")) {
-        // Fix the URL if it has a double slash issue
-        return fileData.replace('/api//', '/api/');
-      }
-      
-      // For paths like "/uploads/filename"
-      const cleanPath = fileData.replace(/^\//, '');
-      return `${API_URL.replace(/\/$/, '')}/${cleanPath}`;
+      return fileData; // Use Cloudinary URL directly
     }
-  
-    return URL.createObjectURL(fileData);
+
+    // If it's a File object (newly selected file)
+    if (fileData instanceof File) {
+      return URL.createObjectURL(fileData); // Create temporary URL for preview
+    }
+
+    return null;
   };
-  
 
   return (
     <div className="profile-upload-section1">
@@ -77,7 +75,7 @@ const UploadsSection = ({ formData, handleChange, API_URL }) => {
           type="file"
           name="resume"
           onChange={handleChange}
-          accept=".pdf,.doc,.docx"
+          accept=".pdf"
           style={{ display: "none" }}
         />
       </div>

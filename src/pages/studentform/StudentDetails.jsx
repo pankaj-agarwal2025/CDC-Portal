@@ -1,3 +1,4 @@
+// src/pages/studentform/StudentDetails.jsx
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "./studentDetails.css";
@@ -14,7 +15,7 @@ import CertificationsSection from "./Certifications";
 import ExperienceSection from "./Experience";
 import UploadsSection from "./Uploads";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchUser } from "../../redux/authSlice"; // Adjust path as needed
+import { fetchUser } from "../../redux/authSlice";
 
 const StudentDetails = () => {
   const navigate = useNavigate();
@@ -74,19 +75,12 @@ const StudentDetails = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-
         const userData = res.data || {};
-        const profilePhotoUrl = userData.profilePhoto
-  ? userData.profilePhoto.startsWith("http")
-    ? userData.profilePhoto
-    : `${API_URL.replace(/\/$/, "")}/${userData.profilePhoto.replace(/^\/?api\//, "")}`
-  : null;
-
-
         setFormData((prev) => ({
           ...prev,
           ...userData,
-          profilePhoto: profilePhotoUrl,
+          profilePhoto: userData.profilePhoto || null,
+          resume: userData.resume || null,
           education: userData.education || prev.education,
           experience: Array.isArray(userData.experience) && userData.experience.length > 0
             ? userData.experience
@@ -324,7 +318,7 @@ const StudentDetails = () => {
     } catch (error) {
       console.error("Error updating profile:", error);
       if (error.response?.status === 401) {
-        toast.error("Session expired. Please auth-Container again.");
+        toast.error("Session expired. Please login again.");
         localStorage.removeItem("token");
         localStorage.removeItem("role");
         navigate("/auth-Container");

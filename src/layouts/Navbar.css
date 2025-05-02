@@ -123,13 +123,13 @@
   box-shadow: 0 7px 20px rgba(0, 0, 0, 0.15);
 }
 
-.logout {
+.logout1 {
   background: transparent;
   color: #000000;
   border: 2px solid #000000;
 }
 
-.logout:hover {
+.logout1:hover {
   background: rgba(0, 0, 0, 0.05);
   transform: translateY(-3px);
 }

@@ -543,15 +543,6 @@ const AdminApplicationManagement = () => {
                       <strong>Resume:</strong>{" "}
                       {modalApp.resume && modalApp.resumeValid ? (
                         <>
-                          <a
-                            href={`${API_URL}/applications/resume/${modalApp._id}?view=true`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="resume-link"
-                            onClick={() => console.log("Viewing resume for application:", modalApp._id)}
-                          >
-                            View Resume
-                          </a>
                           <button
                             onClick={() => handleDownloadResume(modalApp._id)}
                             className="download-button"

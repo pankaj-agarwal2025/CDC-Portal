@@ -14,7 +14,7 @@ const AdminJobManagement = () => {
   const [formMode, setFormMode] = useState("create");
   const [sortConfig, setSortConfig] = useState({ key: "createdAt", direction: "desc" });
   const [currentJob, setCurrentJob] = useState(null);
-  const [moreFilters, setMoreFilters] = useState(false); // Toggle for more/less filters
+  const [moreFilters, setMoreFilters] = useState(false);
 
   const [filters, setFilters] = useState({
     status: "all",
@@ -102,6 +102,22 @@ const AdminJobManagement = () => {
     }
   };
 
+  // New function to send notification to students
+  const sendJobNotification = async (jobId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/jobs/${jobId}/notify`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      return true;
+    } catch (err) {
+      console.error("Error sending job notification:", err);
+      throw new Error(err.response?.data?.message || "Failed to send job notification");
+    }
+  };
+
   const loadJobs = useCallback(async () => {
     await fetchJobs(filters);
   }, [filters]);
@@ -181,12 +197,19 @@ const AdminJobManagement = () => {
 
   const handleApprove = async (jobId) => {
     try {
+      // Update job status to approved
       await updateJobStatus(jobId, "approved");
+      // Send notification to students
+      await sendJobNotification(jobId);
+      // Update local state
       setJobs(jobs.map((job) => (job._id === jobId ? { ...job, status: "approved" } : job)));
       setSelectedJobs(selectedJobs.filter((id) => id !== jobId));
       setError(null);
+      setSuccessMessage("Job approved and email notifications sent to students.");
+      // Clear success message after 5 seconds
+      setTimeout(() => setSuccessMessage(null), 5000);
     } catch (err) {
-      setError(`Failed to approve job: ${err.message}`);
+      setError(`Failed to approve job or send notifications: ${err.message}`);
     }
   };
 
@@ -217,12 +240,19 @@ const AdminJobManagement = () => {
   const handleBulkApprove = async () => {
     if (window.confirm(`Are you sure you want to approve ${selectedJobs.length} jobs?`)) {
       try {
+        // Approve all selected jobs
         await Promise.all(selectedJobs.map((id) => updateJobStatus(id, "approved")));
+        // Send notifications for all approved jobs
+        await Promise.all(selectedJobs.map((id) => sendJobNotification(id)));
+        // Update local state
         setJobs(jobs.map((job) => (selectedJobs.includes(job._id) ? { ...job, status: "approved" } : job)));
         setSelectedJobs([]);
         setError(null);
+        setSuccessMessage(`${selectedJobs.length} jobs approved and email notifications sent to students.`);
+        // Clear success message after 5 seconds
+        setTimeout(() => setSuccessMessage(null), 5000);
       } catch (err) {
-        setError(`Failed to approve some jobs: ${err.message}`);
+        setError(`Failed to approve some jobs or send notifications: ${err.message}`);
       }
     }
   };
@@ -276,7 +306,9 @@ const AdminJobManagement = () => {
         );
         setJobs([response.data.data, ...jobs]);
         if (response.data.data.status === "approved") {
+          await sendJobNotification(response.data.data._id);
           setSuccessMessage("Job created and email notifications sent to students.");
+          setTimeout(() => setSuccessMessage(null), 5000);
         }
       } else {
         const response = await axios.put(
@@ -537,7 +569,7 @@ const AdminJobManagement = () => {
         {viewModalOpen && currentJob && (
           <div className="job-description-overlay">
             <div className="job-description__container">
-              <button className="job-description__close-btn" onClick={closeModal}>×</button>
+              <button className="job-description__close-btn" onClick={closefluoroModal}>×</button>
               <div className="job-description__header2">
                 <h1 className="job-title-head2">{currentJob.profiles}</h1>
                 <div className="job-header-details2">

@@ -215,6 +215,22 @@ const AdminPanel = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      // Check if window width is 768px or less
+      const isMobileDevice = window.innerWidth <= 768;
+      setIsMobile(isMobileDevice);
+    };
+
+    checkMobile(); // Check on mount
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+
 
   const fetchUserRoleAndStats = async () => {
     setLoading(true);
@@ -292,6 +308,17 @@ const AdminPanel = () => {
     window.location.href = "/";
   };
 
+  if (isMobile) {
+    return (
+      <div className="mobile-warning-container">
+        <div className="mobile-warning-content">
+          <h2>Admin Panel Not Available</h2>
+          <p>This Admin Panel cannot be accessed on mobile devices.</p>
+          <p>Please use a desktop or laptop for full functionality.</p>
+        </div>
+      </div>
+    );
+  }
   const renderDashboard = () => {
     // Only admins can see the dashboard
     if (userRole !== "admin") {
@@ -300,6 +327,7 @@ const AdminPanel = () => {
 
     return (
       <div className="admin-dashboard">
+      
         <h2>Admin Dashboard</h2>
         {error && <div className="error-message">{error}</div>}
         {loading ? (
@@ -423,6 +451,7 @@ const AdminPanel = () => {
   return (
     <div className="admin-panel-container">
       <div className="admin-sidebar">
+      
         <div className="admin-logo">
           <h1>{userRole === "staff" ? "Staff Panel" : "Admin Panel"}</h1>
         </div>

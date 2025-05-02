@@ -198,7 +198,6 @@ const AdminApplicationManagement = () => {
         return;
       }
   
-      console.log("Applications for export:", filteredApps); // Debug log
   
       // Define column headers
       const headers = ["Name", "Email", "Contact", "Resume"];
@@ -358,7 +357,6 @@ const AdminApplicationManagement = () => {
   const openAppModal = async (app) => {
     let resumeValid = false;
     if (app.resume) {
-      console.log("Opening modal with resume URL:", app.resume);
       resumeValid = await checkResumeUrl(app._id);
     }
     setModalApp({ ...app, resumeValid });

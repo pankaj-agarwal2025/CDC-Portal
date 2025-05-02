@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 import "./JobDescription.css";
 
 const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
@@ -11,6 +13,7 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
   });
   const [submitStatus, setSubmitStatus] = useState(null);
   const [formErrors, setFormErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleApplyClick = () => {
     setIsApplying(true);
@@ -48,7 +51,11 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
     if (!formData.phone.trim()) errors.phone = "Phone number is required";
     else if (!/^\d{10}$/.test(formData.phone)) errors.phone = "Phone number must be 10 digits";
     if (!formData.resume) errors.resume = "Resume is required";
-    else if (!["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(formData.resume.type)) {
+    else if (
+      !["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(
+        formData.resume.type
+      )
+    ) {
       errors.resume = "Resume must be PDF, DOC, or DOCX";
     }
     return errors;
@@ -56,20 +63,14 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     const errors = validateForm();
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       setSubmitStatus("error");
+      setIsSubmitting(false);
       return;
     }
-
-    console.log("Submitting Form Data:", {
-      jobId: job._id,
-      fullName: formData.fullName,
-      email: formData.email,
-      phone: formData.phone,
-      resume: formData.resume ? formData.resume.name : null,
-    });
 
     const data = new FormData();
     data.append("jobId", job._id);
@@ -79,37 +80,32 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
     data.append("resume", formData.resume);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/applications`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: data,
-      });
-
-      const text = await response.text();
-      console.log("Raw response:", text);
-
-      let result;
-      try {
-        result = JSON.parse(text);
-      } catch (error) {
-        throw new Error("Invalid JSON response from server");
-      }
-
-      if (!response.ok) {
-        throw new Error(result.message || `Server error: ${response.status}`);
-      }
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/applications`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       setSubmitStatus("success");
+      toast.success(response.data.message || "Application submitted successfully!");
       setTimeout(() => {
         handleCloseApplyForm();
         onApply?.();
       }, 2000);
     } catch (error) {
       console.error("Error submitting application:", error);
+      const errorMessage =
+        error.response?.data?.message || "Failed to submit application. Please try again.";
+      setFormErrors({ general: errorMessage });
       setSubmitStatus("error");
-      setFormErrors({ general: error.message || "Failed to submit application. Please try again." });
+      toast.error(errorMessage);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -220,6 +216,7 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
                     value={formData.fullName}
                     onChange={handleInputChange}
                     required
+                    disabled={isSubmitting}
                   />
                   {formErrors.fullName && <p className="error-msg">{formErrors.fullName}</p>}
                 </div>
@@ -231,6 +228,7 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
+                    disabled={isSubmitting}
                   />
                   {formErrors.email && <p className="error-msg">{formErrors.email}</p>}
                 </div>
@@ -242,6 +240,7 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
                     value={formData.phone}
                     onChange={handleInputChange}
                     required
+                    disabled={isSubmitting}
                   />
                   {formErrors.phone && <p className="error-msg">{formErrors.phone}</p>}
                 </div>
@@ -252,13 +251,16 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
                     accept=".pdf,.doc,.docx"
                     onChange={handleInputChange}
                     required
+                    disabled={isSubmitting}
                   />
                   {formErrors.resume && <p className="error-msg">{formErrors.resume}</p>}
                 </div>
                 {formErrors.general && <p className="error-msg">{formErrors.general}</p>}
                 <div className="form-actions">
-                  <button type="submit">Submit Application</button>
-                  <button type="button" onClick={handleCloseApplyForm}>
+                  <button type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? "Submitting..." : "Submit Application"}
+                  </button>
+                  <button type="button" onClick={handleCloseApplyForm} disabled={isSubmitting}>
                     Cancel
                   </button>
                 </div>

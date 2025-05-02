@@ -249,7 +249,6 @@ const AdminJobManagement = () => {
         setSelectedJobs([]);
         setError(null);
         setSuccessMessage(`${selectedJobs.length} jobs approved and email notifications sent to students.`);
-        // Clear success message after 5 seconds
         setTimeout(() => setSuccessMessage(null), 5000);
       } catch (err) {
         setError(`Failed to approve some jobs or send notifications: ${err.message}`);

@@ -34,8 +34,76 @@ const AdminJobForm = ({ formMode, initialData, onSubmit, onCancel }) => {
   const dropdownRef = useRef(null);
 
   const jobCategories = [
-    "Interaction Designer", "Network Administrator", "User Interface Designer", /* ...rest from JobPostForm */ "Other"
-  ].sort();
+    "Interaction Designer",
+    "Network Administrator",
+    "User Interface Designer",
+    "Social Media Manager",
+    "User Experience Designer",
+    "Procurement Analyst",
+    "Social Media Analyst",
+    "Quality Assurance Analyst",
+    "SEO Specialist",
+    "Executive Assistant",
+    "Database Administrator",
+    "Procurement Manager",
+    "Data Analyst",
+    "Backend Developer",
+    "Demand Planner",
+    "Office Manager",
+    "Customer Success Manager",
+    "Frontend Developer",
+    "Retirement Planner",
+    "Account Executive",
+    "Inside Sales Representative",
+    "UX/UI Designer",
+    "Network Security Analyst",
+    "Paralegal",
+    "Training Coordinator",
+    "Event Coordinator",
+    "Personal Assistant",
+    "Sustainable Design Specialist",
+    "Data Scientist",
+    "Customer Support Specialist",
+    "Systems Administrator",
+    "Data Entry Specialist",
+    "Manufacturing Engineer",
+    "Residential Landscape Designer",
+    "Sales Account Manager",
+    "IT Project Manager",
+    "Portfolio Manager",
+    "Content Strategist",
+    "Product Marketing Manager",
+    "Inventory Manager",
+    "Business Intelligence Analyst",
+    "Market Researcher",
+    "Supply Chain Manager",
+    "Water Resources Engineer",
+    "Supply Chain Coordinator",
+    "DevOps Engineer",
+    "Client Relationship Manager",
+    "Investment Advisor",
+    "Financial Analyst",
+    "Wedding Planner",
+    "Front-End Developer",
+    "Family Law Attorney",
+    "Content Creator",
+    "Event Planner",
+    "Automation Tester",
+    "Market Research Analyst",
+    "Benefits Coordinator",
+    "Research Analyst",
+    "Administrative Coordinator",
+    "IT Support Specialist",
+    "UI/UX Designer",
+    "Software Development",
+    "Data Science",
+    "Product Management",
+    "Marketing",
+    "Sales",
+    "Finance",
+    "Operations",
+    "Human Resources",
+    "Customer Support" ].sort();
 
   useEffect(() => {
     if (initialData && formMode === "edit") {
@@ -218,6 +286,8 @@ const handleSubmit = (e) => {
             <select name="resultDeclaration" value={formData.resultDeclaration} onChange={handleChange}>
               <option value="Same day">Same day</option>
               <option value="Within a week">Within a week</option>
+              <option value="Within a month">Within a month</option>
+              <option value="After a month">After a month</option>
             </select>
           </div>
           <div className="job-info2">

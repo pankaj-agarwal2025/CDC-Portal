@@ -767,6 +767,8 @@ const JobPostForm = () => {
   >
     <option value="Same day">Same day</option>
     <option value="Within a week">Within a week</option>
+    <option value="Within a month">Within a month</option>
+    <option value="After a month">After a month</option>
   </select>
   {errors.resultDeclaration && <span className="error-message">{errors.resultDeclaration}</span>}
 </div>

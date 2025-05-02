@@ -5,7 +5,7 @@ import bgImage from '../assets/KRmu.webp'
 
 function Features() {
   return (
-    <div className='features' style={{ backgroundImage: `url(${bgImage})` }}>
+    <div className='features'>
       <div className="overlay"></div>
 
       <div className="content"> 

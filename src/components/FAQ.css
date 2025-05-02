@@ -1,77 +1,89 @@
 .faq {
-  max-width: 1400px;
-  margin: 4rem auto;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #ffffff;
+  padding: 5rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .faq-head {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #00b894;
+  font-size: 2.5rem;
+  font-weight: 700;
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
+  color: #000000;
 }
 
 .faq-qs {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 .fqs {
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
   border-radius: 12px;
-  background-color: rgba(255, 255, 255, 0.5);
-  padding: 1rem 1.2rem;
-  transition: all 0.3s ease-in-out;
-  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid #FFD700;
 }
 
 .qs-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.qs-container:hover {
+  background-color: #f9f9f9;
 }
 
 .qs-head {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #2d3436;
+  color: #000000;
   margin: 0;
 }
 
 .f-toggle {
   font-size: 1.5rem;
-  color: #00b894;
-  font-weight: bold;
+  font-weight: 700;
+  color: #FFD700;
+  margin: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000000;
+  border-radius: 50%;
+  color: #FFD700;
 }
 
 .qs-answer {
-  margin-top: 0.7rem;
-  font-size: 0.95rem;
-  color: #555;
-  line-height: 1.5;
-  transition: max-height 0.3s ease-in-out;
+  padding: 0 1.5rem 1.5rem;
+  color: #555555;
+  line-height: 1.6;
+  margin: 0;
 }
 
-/* Optional: Smooth expand animation */
-.fqs .qs-answer {
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
+@media (max-width: 768px) {
+  .faq {
+    padding: 3rem 1rem;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  
+  .faq-head {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .qs-head {
+    font-size: 1rem;
+  }
+  
+  .qs-container {
+    padding: 1.2rem;
   }
 }

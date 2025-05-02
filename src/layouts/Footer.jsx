@@ -10,8 +10,8 @@ function Footer() {
         <div className="footer-section">
           <h2>Contact Us</h2>
           <p><FaMapMarkerAlt />KRMU, Sohna Rd, Gurugram, India</p>
-          <p><FaPhone /> +91 98765 43210</p>
-          <p><FaEnvelope /> info@company.com</p>
+          <p><FaPhone /> +91-9827085056</p>
+          <p><FaEnvelope /> director.cdc@krmangalam.edu.in</p>
         </div>
 
         <div className="footer-section">

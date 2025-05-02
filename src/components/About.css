@@ -15,8 +15,8 @@
 
 /* Header Section */
 .about-header {
-  background: linear-gradient(135deg, #00b894 0%, #00b894 100%);
-  color: white;
+  background: linear-gradient(135deg, rgb(232, 232, 130) 0%, yellow 100%);
+  color: black;
   text-align: center;
   padding: 60px 20px;
   margin-bottom: 40px;
@@ -31,7 +31,7 @@
   transform: translateX(-50%);
   width: 60px;
   height: 4px;
-  background-color: #00b894;
+  background-color: yellow;
   border-radius: 2px;
 }
 
@@ -69,7 +69,7 @@ section {
 }
 
 section h2 {
-  color: #00b894;
+  color: black;
   font-size: 1.8rem;
   margin-bottom: 20px;
   position: relative;
@@ -84,7 +84,7 @@ section h2:after {
   left: 0;
   width: 50px;
   height: 3px;
-  background: #00b894;
+  background: yellow;
 }
 
 section p {
@@ -115,13 +115,13 @@ section p {
 .feature-item:hover {
   transform: translateY(-5px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  border-color: #00b894;
+  border-color: yellow;
 }
 
 .feature-icon {
   font-size: 2rem;
   margin-bottom: 10px;
-  color: #00b894;
+  color: yellow;
 }
 
 .feature-item p {
@@ -179,7 +179,7 @@ section p {
 
 .developer-card:hover .developer-photo {
   transform: scale(1.05);
-  border-color: #00b894;
+  border-color: yellow;
 }
 
 .developer-info {
@@ -195,7 +195,7 @@ section p {
 }
 
 .developer-role {
-  color: #00b894;
+  color: yellowgreen;
   font-weight: 500;
   margin-bottom: 10px;
 }
@@ -228,7 +228,7 @@ section p {
 }
 
 .contact-link.linkedin {
-  border-color: #00b894;
+  border-color: yellow;
   background-color: rgba(255, 255, 255, 0.4);
   color: #111;
   backdrop-filter: blur(6px);
@@ -236,8 +236,8 @@ section p {
 }
 
 .contact-link.linkedin:hover {
-  background-color: #00b894;
-  color: white;
+  background-color: yellow;
+  color: black;
 }
 
 .contact-link.email {
@@ -265,7 +265,7 @@ section p {
   border-radius: 8px;
   padding: 20px;
   margin-top: 20px;
-  border: 2px solid #00b894;
+  border: 2px solid yellow;
 }
 
 .contact-info p {
@@ -286,11 +286,11 @@ section p {
   }
   
   section {
-    padding: 20px;
+    padding: 10px;
   }
   
   .developer-photo-wrapper {
-    padding: 20px 20px 0;
+    padding: 10px 10px 0;
   }
   
   .developer-info {

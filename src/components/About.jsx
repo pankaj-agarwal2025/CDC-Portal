@@ -142,7 +142,7 @@ function About() {
             </p>
             <div className="contact-info">
               <p>For inquiries about CampusConnect, please contact:</p>
-              <p><strong>Email:</strong> soet.krmu.2013@gmail.com</p>
+              <p><strong>Email:</strong> director.cdc@krmangalam.edu.in</p>
               <p><strong>CDC Office:</strong> A Block, K.R. Mangalam University</p>
             </div>
           </section>

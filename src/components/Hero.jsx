@@ -1,37 +1,42 @@
 import React from "react";
-import './Hero.css'
-import img1 from "../assets/hero-img.png"
+import "./Hero.css";
+import img1 from "../assets/hero-img.png";
 import { useNavigate } from "react-router-dom";
+
 function Hero() {
-  const navigate= useNavigate();
-  function handleJoin(){
+  const navigate = useNavigate();
+  
+  function handleJoin() {
     navigate('/authContainer');
   }
-  function handlePost(){
+  
+  function handlePost() {
     navigate('/post-job');
   }
+  
   return (
-    <div className="hero-section">
-      <div className="hero-left">
-        <div className="hero-left-up">
-          <h2 className="hero-heading">
-          CampusConnect - Bridging Talent & Opportunities
-          </h2>
-          <p className="hero-para">A smart, efficient platform connecting students with career opportunities, internships, and industry insights.</p>
+    <div className="hero-container">
+      <div className="hero-content">
+        <div className="hero-text">
+          <h1>CampusConnect</h1>
+          <h2>Bridging Talent & Opportunities</h2>
+          <p>
+            A smart, efficient platform connecting students with career opportunities, 
+            internships, and industry insights.
+          </p>
+          <div className="hero-buttons">
+            <button className="btn-primary11" onClick={handleJoin}>
+              Join Now
+            </button>
+            <button className="btn-secondary11" onClick={handlePost}>
+              Post a Job
+            </button>
+          </div>
         </div>
-        <div className="hero-buttons">
-            <button onClick={handleJoin} className="join-now">
-                Join Now
-            </button>
-            <button className="post-job" onClick={handlePost}>
-                Post a Job
-            </button>
+        <div className="hero-image">
+          <img src={img1 || "/placeholder.svg"} alt="Campus Connect" />
         </div>
       </div>
-      <div className="hero-right">
-        <img  className="hero-image" src={img1} alt="Hero Image"/>
-      </div>
-
     </div>
   );
 }

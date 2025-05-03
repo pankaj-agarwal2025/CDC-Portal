@@ -47,14 +47,18 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
     const errors = {};
     if (!formData.fullName.trim()) errors.fullName = "Full name is required";
     if (!formData.email.trim()) errors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) errors.email = "Invalid email format";
+    else if (!/\S+@\S+\.\S+/.test(formData.email))
+      errors.email = "Invalid email format";
     if (!formData.phone.trim()) errors.phone = "Phone number is required";
-    else if (!/^\d{10}$/.test(formData.phone)) errors.phone = "Phone number must be 10 digits";
+    else if (!/^\d{10}$/.test(formData.phone))
+      errors.phone = "Phone number must be 10 digits";
     if (!formData.resume) errors.resume = "Resume is required";
     else if (
-      !["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(
-        formData.resume.type
-      )
+      ![
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ].includes(formData.resume.type)
     ) {
       errors.resume = "Resume must be PDF, DOC, or DOCX";
     }
@@ -92,7 +96,9 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
       );
 
       setSubmitStatus("success");
-      toast.success(response.data.message || "Application submitted successfully!");
+      toast.success(
+        response.data.message || "Application submitted successfully!"
+      );
       setTimeout(() => {
         handleCloseApplyForm();
         onApply?.();
@@ -100,7 +106,8 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
     } catch (error) {
       console.error("Error submitting application:", error);
       const errorMessage =
-        error.response?.data?.message || "Failed to submit application. Please try again.";
+        error.response?.data?.message ||
+        "Failed to submit application. Please try again.";
       setFormErrors({ general: errorMessage });
       setSubmitStatus("error");
       toast.error(errorMessage);
@@ -119,7 +126,11 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
         <div className="job-description__header2">
           <h1 className="job-title-head2">{job.profiles}</h1>
           <div className="job-header-details2">
-            <img src={job.companyLogo} alt="Company Logo" className="company-logo" />
+            <img
+              src={job.companyLogo}
+              alt="Company Logo"
+              className="company-logo"
+            />
             <div className="job-header-company2">
               <p className="company-name2">{job.companyName}</p>
               <p className="company-website2">
@@ -151,14 +162,13 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
             </div>
           </div>
           <div className="job-description__details2">
-            <div className="job-info2">
-              <span>👤 Referred by:</span>
-              <p>
-                {job.reference && job.reference !== "Self"
-                  ? job.reference
-                  : `${job.contactPersonName} (${job.email})`}
-              </p>
-            </div>
+            {job.reference && job.reference !== "Self" && (
+              <div className="job-info2">
+                <span>👤 Referred by:</span>
+                <p>{job.reference}</p>
+              </div>
+            )}
+
             <div className="job-info2">
               <span>Category:</span>
               <p>{job.category.join(", ")}</p>
@@ -190,10 +200,16 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
 
         {!isAdmin && (
           <div className="job-description__footer">
-            <button className="job-description__apply-btn" onClick={handleApplyClick}>
+            <button
+              className="job-description__apply-btn"
+              onClick={handleApplyClick}
+            >
               Apply Now
             </button>
-            <button className="job-description__close-details-btn" onClick={onClose}>
+            <button
+              className="job-description__close-details-btn"
+              onClick={onClose}
+            >
               Back to Job Listings
             </button>
           </div>
@@ -205,7 +221,9 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
           <div className="apply-form-container">
             <h2>Apply for {job.profiles}</h2>
             {submitStatus === "success" ? (
-              <p className="success-msg">Application submitted successfully! 🎉</p>
+              <p className="success-msg">
+                Application submitted successfully! 🎉
+              </p>
             ) : (
               <form onSubmit={handleSubmit}>
                 <div className="form-field">
@@ -218,7 +236,9 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
                     required
                     disabled={isSubmitting}
                   />
-                  {formErrors.fullName && <p className="error-msg">{formErrors.fullName}</p>}
+                  {formErrors.fullName && (
+                    <p className="error-msg">{formErrors.fullName}</p>
+                  )}
                 </div>
                 <div className="form-field">
                   <input
@@ -230,7 +250,9 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
                     required
                     disabled={isSubmitting}
                   />
-                  {formErrors.email && <p className="error-msg">{formErrors.email}</p>}
+                  {formErrors.email && (
+                    <p className="error-msg">{formErrors.email}</p>
+                  )}
                 </div>
                 <div className="form-field">
                   <input
@@ -242,7 +264,9 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
                     required
                     disabled={isSubmitting}
                   />
-                  {formErrors.phone && <p className="error-msg">{formErrors.phone}</p>}
+                  {formErrors.phone && (
+                    <p className="error-msg">{formErrors.phone}</p>
+                  )}
                 </div>
                 <div className="form-field">
                   <input
@@ -253,14 +277,22 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
                     required
                     disabled={isSubmitting}
                   />
-                  {formErrors.resume && <p className="error-msg">{formErrors.resume}</p>}
+                  {formErrors.resume && (
+                    <p className="error-msg">{formErrors.resume}</p>
+                  )}
                 </div>
-                {formErrors.general && <p className="error-msg">{formErrors.general}</p>}
+                {formErrors.general && (
+                  <p className="error-msg">{formErrors.general}</p>
+                )}
                 <div className="form-actions">
                   <button type="submit" disabled={isSubmitting}>
                     {isSubmitting ? "Submitting..." : "Submit Application"}
                   </button>
-                  <button type="button" onClick={handleCloseApplyForm} disabled={isSubmitting}>
+                  <button
+                    type="button"
+                    onClick={handleCloseApplyForm}
+                    disabled={isSubmitting}
+                  >
                     Cancel
                   </button>
                 </div>

@@ -106,7 +106,7 @@ function About() {
                 </div>
                 <div className="developer-info">
                   <h3>Apoorva Sharma</h3>
-                  <p className="developer-role">Project Analyst & AI Specialist</p>
+                  <p className="developer-role">Data Analyst & AI Specialist</p>
                   <p className="developer-bio">
                     Apoorva Sharma, also from MCA (Batch 2023-25), analyzed the requirements and helped
                     create the architecture for CampusConnect. She developed the Resume Insights feature 

@@ -106,7 +106,7 @@ const SubmitInterviewExperience = () => {
             value={formData.author}
             onChange={handleChange}
             required
-            placeholder="e.g., Khushnam Chauhan"
+            placeholder="e.g., Raj Sharma"
           />
         </div>
         <div className="form-group">

@@ -8,7 +8,7 @@ const SearchFilters = ({ onFilterChange }) => {
     skills: ''
   });
 
-  const [isFilterVisible, setIsFilterVisible] = useState(true);
+  const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [typingTimeout, setTypingTimeout] = useState(null);
 
   const offerTypes = [

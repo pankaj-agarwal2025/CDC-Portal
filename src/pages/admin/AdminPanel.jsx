@@ -5,6 +5,7 @@ import AdminApplicationManagement from "./AdminApplicationMgmt";
 import AdminEmailBulk from "./AdminEmailBulk";
 import AdminJobs from "./jobmanager/AdminJobs";
 import AdminTrainings from "./AdminTrainings";
+import AdminInterviewManagement from "./AdminInterviewManagement";
 import { useDispatch } from "react-redux";
 import { logout } from "../../redux/authSlice";
 import { 
@@ -186,7 +187,7 @@ const api = {
   },
   updateTraining: async (trainingId, trainingData) => {
     try {
-      const response = await axios.put(`${API_BASE_URL}/trainings/${trainingId}`, trainingData, getAuthConfig());
+      const response = await axios.put(`${API_BASE_URL}/trainings/${trainingId}`, trainingData, getAuthAutoconfig());
       return response.data;
     } catch (error) {
       console.error("Error updating training:", error);
@@ -201,17 +202,36 @@ const api = {
       console.error("Error deleting training:", error);
       throw error;
     }
+  },
+  fetchInterviewExperiences: async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/interview-experiences/manage`, getAuthConfig());
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching interview experiences:", error);
+      throw error;
+    }
+  },
+  deleteInterviewExperience: async (id) => {
+    try {
+      const response = await axios.delete(`${API_BASE_URL}/interview-experiences/${id}`, getAuthConfig());
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting interview experience:", error);
+      throw error;
+    }
   }
 };
 
 const AdminPanel = () => {
   const dispatch = useDispatch();
-  const [activeSection, setActiveSection] = useState("emails"); // Default to emails for staff
+  const [activeSection, setActiveSection] = useState("dashboard");
   const [userStats, setUserStats] = useState({ totalUsers: 0, activeUsers: 0, pendingApprovals: 0 });
   const [applicationStats, setApplicationStats] = useState({ totalApplications: 0, pendingReview: 0, approved: 0, rejected: 0 });
   const [jobStats, setJobStats] = useState({ totalJobs: 0, activeJobs: 0, expiredJobs: 0 });
   const [emailStats, setEmailStats] = useState({ emailsSent: 0, lastCampaign: "-", openRate: "-" });
   const [trainingStats, setTrainingStats] = useState({ totalTrainings: 0, upcomingTrainings: 0 });
+  const [interviewStats, setInterviewStats] = useState({ totalExperiences: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userRole, setUserRole] = useState(null);
@@ -219,18 +239,15 @@ const AdminPanel = () => {
 
   useEffect(() => {
     const checkMobile = () => {
-      // Check if window width is 768px or less
       const isMobileDevice = window.innerWidth <= 768;
       setIsMobile(isMobileDevice);
     };
 
-    checkMobile(); // Check on mount
+    checkMobile();
     window.addEventListener("resize", checkMobile);
 
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
-
-
 
   const fetchUserRoleAndStats = async () => {
     setLoading(true);
@@ -238,7 +255,7 @@ const AdminPanel = () => {
       const userResponse = await axios.get(`${API_BASE_URL}/auth/me`, getAuthConfig());
       setUserRole(userResponse.data.role);
 
-      // Only fetch stats if user is admin
+      // Fetch stats for admin
       if (userResponse.data.role === "admin") {
         const usersResponse = await axios.get(`${API_BASE_URL}/admin/stats/users`, getAuthConfig());
         setUserStats({
@@ -263,15 +280,20 @@ const AdminPanel = () => {
         });
       }
 
-      // Fetch training stats for both admin and staff
+      // Fetch training and interview stats for both admin and staff
       try {
         const trainingsResponse = await axios.get(`${API_BASE_URL}/trainings/stats`, getAuthConfig());
         setTrainingStats({
           totalTrainings: trainingsResponse.data.totalTrainings || 0,
           upcomingTrainings: trainingsResponse.data.upcomingTrainings || 0,
         });
-      } catch (trainingErr) {
-        console.warn("Training stats not available:", trainingErr.message);
+
+        const interviewResponse = await axios.get(`${API_BASE_URL}/interview-experiences/stats`, getAuthConfig());
+        setInterviewStats({
+          totalExperiences: interviewResponse.data.totalExperiences || 0,
+        });
+      } catch (statErr) {
+        console.warn("Stats not available:", statErr.message);
       }
 
       setError(null);
@@ -294,7 +316,7 @@ const AdminPanel = () => {
     fetchUserRoleAndStats();
   }, [dispatch]);
 
-  // When user role is fetched, set default active section
+  // Set default active section based on user role
   useEffect(() => {
     if (userRole === "staff") {
       setActiveSection("emails");
@@ -319,15 +341,14 @@ const AdminPanel = () => {
       </div>
     );
   }
+
   const renderDashboard = () => {
-    // Only admins can see the dashboard
     if (userRole !== "admin") {
       return <div className="access-denied">Access to dashboard is restricted to administrators.</div>;
     }
 
     return (
       <div className="admin-dashboard">
-      
         <h2>Admin Dashboard</h2>
         {error && <div className="error-message">{error}</div>}
         {loading ? (
@@ -366,6 +387,11 @@ const AdminPanel = () => {
                 <div className="stat-item"><span className="stat-label">Upcoming Trainings:</span><span className="stat-value">{trainingStats.upcomingTrainings}</span></div>
                 <button className="view-more-button" onClick={() => setActiveSection("trainings")}>Manage Trainings</button>
               </div>
+              <div className="stats-card">
+                <h3>Interview Experience Management</h3>
+                <div className="stat-item"><span className="stat-label">Total Experiences:</span><span className="stat-value">{interviewStats.totalExperiences}</span></div>
+                <button className="view-more-button" onClick={() => setActiveSection("interview-experiences")}>Manage Experiences</button>
+              </div>
             </div>
           </>
         )}
@@ -374,90 +400,66 @@ const AdminPanel = () => {
   };
 
   const renderActiveSection = () => {
-    // Access control for sections based on user role
-    if (userRole === "staff") {
-      // Staff can only access emails and trainings
-      switch (activeSection) {
-        case "emails":
-          return (
-            <AdminEmailBulk 
-              fetchUserGroups={fetchUserGroups}
-              fetchEmailTemplates={fetchEmailTemplates}
-              saveTemplate={saveTemplate}
-              sendBulkEmail={sendBulkEmail}
-            />
-          );
-        case "trainings":
-          return (
-            <AdminTrainings
-              fetchTrainings={api.fetchTrainings}
-              createTraining={api.createTraining}
-              updateTraining={api.updateTraining}
-              deleteTraining={api.deleteTraining}
-            />
-          );
-        default:
-          setActiveSection("emails"); // Redirect to emails if trying to access other sections
-          return null;
-      }
-    } else {
-      // Admin can access all sections
-      switch (activeSection) {
-        case "dashboard":
-          return renderDashboard();
-        case "users":
-          return (
-            <AdminUserManagement
-              fetchUsers={api.fetchUsers}
-              updateUser={api.updateUser}
-              deleteUser={api.deleteUser}
-              changeUserRole={api.changeUserRole}
-              createUser={api.createUser}
-            />
-          );
-        case "jobs":
-          return <AdminJobs fetchJobs={api.fetchJobs} updateJob={api.updateJob} deleteJob={api.deleteJob} />;
-        case "applications":
-          return (
-            <AdminApplicationManagement
-              fetchApplications={api.fetchApplications}
-              updateApplicationStatus={api.updateApplicationStatus}
-            />
-          );
-        case "emails":
-          return (
-            <AdminEmailBulk 
-              fetchUserGroups={fetchUserGroups}
-              fetchEmailTemplates={fetchEmailTemplates}
-              saveTemplate={saveTemplate}
-              sendBulkEmail={sendBulkEmail}
-            />
-          );
-        case "trainings":
-          return (
-            <AdminTrainings
-              fetchTrainings={api.fetchTrainings}
-              createTraining={api.createTraining}
-              updateTraining={api.updateTraining}
-              deleteTraining={api.deleteTraining}
-            />
-          );
-        default:
-          return renderDashboard();
-      }
+    switch (activeSection) {
+      case "dashboard":
+        return renderDashboard();
+      case "users":
+        return (
+          <AdminUserManagement
+            fetchUsers={api.fetchUsers}
+            updateUser={api.updateUser}
+            deleteUser={api.deleteUser}
+            changeUserRole={api.changeUserRole}
+            createUser={api.createUser}
+          />
+        );
+      case "jobs":
+        return <AdminJobs fetchJobs={api.fetchJobs} updateJob={api.updateJob} deleteJob={api.deleteJob} />;
+      case "applications":
+        return (
+          <AdminApplicationManagement
+            fetchApplications={api.fetchApplications}
+            updateApplicationStatus={api.updateApplicationStatus}
+          />
+        );
+      case "emails":
+        return (
+          <AdminEmailBulk 
+            fetchUserGroups={fetchUserGroups}
+            fetchEmailTemplates={fetchEmailTemplates}
+            saveTemplate={saveTemplate}
+            sendBulkEmail={sendBulkEmail}
+          />
+        );
+      case "trainings":
+        return (
+          <AdminTrainings
+            fetchTrainings={api.fetchTrainings}
+            createTraining={api.createTraining}
+            updateTraining={api.updateTraining}
+            deleteTraining={api.deleteTraining}
+          />
+        );
+      case "interview-experiences":
+        return (
+          <AdminInterviewManagement
+            fetchInterviewExperiences={api.fetchInterviewExperiences}
+            deleteInterviewExperience={api.deleteInterviewExperience}
+          />
+        );
+      default:
+        return renderDashboard();
     }
   };
 
   return (
     <div className="admin-panel-container">
       <div className="admin-sidebar">
-      
         <div className="admin-logo">
           <h1>{userRole === "staff" ? "Staff Panel" : "Admin Panel"}</h1>
         </div>
         <nav className="admin-nav">
           <ul>
-            {/* Only show dashboard and other admin-only sections to admins */}
             {userRole === "admin" && (
               <>
                 <li className={activeSection === "dashboard" ? "active" : ""}>
@@ -474,13 +476,14 @@ const AdminPanel = () => {
                 </li>
               </>
             )}
-            
-            {/* Show these sections to both admin and staff */}
             <li className={activeSection === "emails" ? "active" : ""}>
               <button onClick={() => setActiveSection("emails")}><span className="nav-icon">📧</span>Bulk Email</button>
             </li>
             <li className={activeSection === "trainings" ? "active" : ""}>
               <button onClick={() => setActiveSection("trainings")}><span className="nav-icon">🎓</span>Trainings</button>
+            </li>
+            <li className={activeSection === "interview-experiences" ? "active" : ""}>
+              <button onClick={() => setActiveSection("interview-experiences")}><span className="nav-icon">📋</span>Interview Experiences</button>
             </li>
           </ul>
         </nav>
@@ -502,7 +505,7 @@ const AdminPanel = () => {
           <div className="breadcrumb">
             <span>{userRole === "admin" ? "Admin" : "Staff"}</span>
             <span className="separator">/</span>
-            <span>{activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}</span>
+            <span>{activeSection.charAt(0).toUpperCase() + activeSection.slice(1).replace(/-/g, ' ')}</span>
           </div>
         </div>
         <div className="admin-body">{renderActiveSection()}</div>

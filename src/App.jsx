@@ -19,12 +19,16 @@ import MyApplications from "./pages/job-listings/Applications";
 import VerifyEmail from "./pages/loginPage/VerifyEmail";
 import CVInsightsPage from "./pages/job-listings/CV";
 import About from "./components/About";
+import InterviewInsights from "./pages/job-listings/InterviewInsights";
+import AdminInterviewManagement from "./pages/admin/AdminInterviewManagement";
+import SubmitInterviewExperience from "./pages/job-listings/SubmitInterviewExperience";
+
 
 function App() {
   const dispatch = useDispatch();
   const { user, isAuthenticated, loading } = useSelector((state) => state.auth);
 
-  // ✅ Automatically Fetch User Data on App Load
+  // Automatically Fetch User Data on App Load
   useEffect(() => {
     if (!user && localStorage.getItem("token")) {
       dispatch(fetchUser());
@@ -67,7 +71,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* ✅ Public Routes */}
+        {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth-Container" element={
           isAuthenticated && user && user.role ? 
@@ -75,8 +79,11 @@ function App() {
             : 
             <AuthContainer />
         } />
+        <Route path="/submit-interview-experience" element={<SubmitInterviewExperience />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/about" element={<About />} />
 
-        {/* ✅ Protected Profile Setup */}
+        {/* Protected Profile Setup */}
         <Route 
           path="/student-details" 
           element={
@@ -86,7 +93,7 @@ function App() {
           } 
         />
 
-        {/* ✅ Student Dashboard Routes */}
+        {/* Student Dashboard Routes */}
         <Route 
           path="/dashboard" 
           element={
@@ -104,6 +111,14 @@ function App() {
           } 
         />
         <Route 
+          path="/interview-insights" 
+          element={
+            <ProtectedRoute allowedRoles={['student']}>
+              <DashboardLayout><InterviewInsights /></DashboardLayout>
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
           path="/my-applications" 
           element={
             <ProtectedRoute allowedRoles={['student']}>
@@ -111,8 +126,6 @@ function App() {
             </ProtectedRoute>
           } 
         />
-        <Route path="/verify-email" element={<VerifyEmail />} />
-        <Route path="/about" element={<About />} />
         <Route 
           path="/job-listings" 
           element={
@@ -121,7 +134,6 @@ function App() {
             </ProtectedRoute>
           } 
         />
-       
         <Route 
           path="/cv" 
           element={
@@ -139,7 +151,7 @@ function App() {
           } 
         />
 
-        {/* ✅ Admin & Staff Routes */}
+        {/* Admin & Staff Routes */}
         <Route 
           path="/admin-panel" 
           element={
@@ -148,15 +160,24 @@ function App() {
             </ProtectedRoute>
           } 
         />
-        
+        <Route 
+          path="/admin-panel/interview-experiences" 
+          element={
+            <ProtectedRoute allowedRoles={['admin', 'staff']}>
+              <AdminInterviewManagement />
+            </ProtectedRoute>
+          } 
+        />
         <Route 
           path="/post-job" 
           element={
+            <ProtectedRoute allowedRoles={['admin', 'staff']}>
               <JobPostForm />
+            </ProtectedRoute>
           } 
         />
 
-        {/* ✅ Catch-All Route */}
+        {/* Catch-All Route */}
         <Route path="*" element={redirectToDashboard()} />
       </Routes>
     </Router>

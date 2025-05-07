@@ -25,6 +25,7 @@ const Sidebar = ({ isOpen, onItemClick }) => {
     { name: "Job Listings", path: "/job-listings" },
     { name: "My Applications", path: "/my-applications" },
     { name: "CDC Trainings", path: "/cdc-trainings" },
+    { name: "Interview Insights", path: "/interview-insights"},
     { name: "Profile", path: "/profile" },
     ...(user?.role === "admin"
       ? [{ name: "Admin Dashboard", path: "/admin-mgmnt" }]
@@ -79,15 +80,17 @@ const Sidebar = ({ isOpen, onItemClick }) => {
 
             {/* Sidebar Menu */}
             {menuItems.map((item) => (
-              <li key={item.name} className="menu-item">
-                <NavLink
-                  to={item.path}
-                  className={({ isActive }) => (isActive ? "active" : "")}
-                  onClick={onItemClick}
-                >
-                  {item.name}
-                </NavLink>
-              </li>
+              (!item.studentOnly || (item.studentOnly && user?.role !== "admin")) && (
+                <li key={item.name} className="menu-item">
+                  <NavLink
+                    to={item.path}
+                    className={({ isActive }) => (isActive ? "active" : "")}
+                    onClick={onItemClick}
+                  >
+                    {item.name}
+                  </NavLink>
+                </li>
+              )
             ))}
 
             {/* Logout Button */}

@@ -153,7 +153,11 @@
 .job-description__apply-btn:hover {
   background: #218838;
 }
-
+.job-description__apply-btn:disabled {
+  background-color: #e78787;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
 .job-description__close-details-btn {
   background: #6c757d;
   color: #fff;
@@ -161,6 +165,23 @@
 
 .job-description__close-details-btn:hover {
   background: #5a6268;
+}
+
+.job-card {
+  position: relative;
+}
+
+.applied-badge {
+  position: absolute;
+  bottom: 40px;
+  right: 10px;
+  background-color: #4caf50;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  opacity: 0.9;
 }
 
 /* Application Form Modal */

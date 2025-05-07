@@ -1,12 +1,38 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { FaMapMarkerAlt, FaBuilding, FaUsers, FaMoneyBillWave, FaCalendarAlt } from "react-icons/fa"
+import axios from "axios"
+import { toast } from "react-toastify"
 import defaultLogo from "../../assets/hero-img.png"
 import JobDescriptionPage from "./JobDescription"
 
 const JobCard = ({ job }) => {
   const [showJobDescription, setShowJobDescription] = useState(false)
+  const [hasApplied, setHasApplied] = useState(false)
+
+  useEffect(() => {
+    const checkApplicationStatus = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/applications/my-applications`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        // Check if the current job._id exists in the list of applications
+        const applied = response.data.some(app => app.jobId?._id === job._id);
+        setHasApplied(applied);
+      } catch (error) {
+        console.error("Error checking application status:", error);
+        toast.error("Failed to check application status.");
+      }
+    };
+
+    checkApplicationStatus();
+  }, [job._id]);
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" }
@@ -21,24 +47,19 @@ const JobCard = ({ job }) => {
     setShowJobDescription(false)
   }
 
-  const handleApply = (formData, jobId) => {
-    // Handle the application submission
-    console.log("Application submitted:", formData)
-    console.log("For job:", jobId)
-
-    
-    // submitApplication(formData, jobId)
-    //   .then(response => {
-    //     console.log('Application submitted successfully');
-    //   })
-    //   .catch(error => {
-    //     console.error('Error submitting application:', error);
-    //   });
+  const handleApply = () => {
+    // Update hasApplied state after successful application
+    setHasApplied(true);
   }
 
   return (
     <>
       <div className="job-card">
+        {hasApplied && (
+          <div className="applied-badge">
+            Already Applied
+          </div>
+        )}
         <div className="job-card-header">
           <div className="company-logo">
             <img src={job.companyLogo || defaultLogo} alt={`${job.companyName} logo`} />
@@ -75,11 +96,6 @@ const JobCard = ({ job }) => {
             <FaMoneyBillWave className="job-icon" />
             <span>skills: {job.skills.join(', ')}</span>
           </div>
-
-          {/* <div className="job-detail-item">
-            <FaCalendarAlt className="job-icon" />
-            <span>Join by: {formatDate(job.dateOfJoining)}</span>
-          </div> */}
         </div>
 
         {job.eligibility && (
@@ -103,4 +119,3 @@ const JobCard = ({ job }) => {
 }
 
 export default JobCard
-

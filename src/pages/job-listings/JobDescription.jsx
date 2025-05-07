@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "./JobDescription.css";
 
 const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
   const [isApplying, setIsApplying] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -14,6 +15,31 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
   const [submitStatus, setSubmitStatus] = useState(null);
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const checkApplicationStatus = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/applications/my-applications`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        // Check if the current job._id exists in the list of applications
+        const applied = response.data.some(app => app.jobId?._id === job._id);
+        setHasApplied(applied);
+      } catch (error) {
+        console.error("Error checking application status:", error);
+        toast.error("Failed to check application status. Please try again.");
+      }
+    };
+
+    if (!isAdmin) {
+      checkApplicationStatus();
+    }
+  }, [job._id, isAdmin]);
 
   const handleApplyClick = () => {
     setIsApplying(true);
@@ -96,6 +122,7 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
       );
 
       setSubmitStatus("success");
+      setHasApplied(true); // Update status after successful application
       toast.success(
         response.data.message || "Application submitted successfully!"
       );
@@ -200,12 +227,18 @@ const JobDescriptionPage = ({ job, onClose, onApply, isAdmin = false }) => {
 
         {!isAdmin && (
           <div className="job-description__footer">
-            <button
-              className="job-description__apply-btn"
-              onClick={handleApplyClick}
-            >
-              Apply Now
-            </button>
+            {hasApplied ? (
+              <button className="job-description__apply-btn" disabled>
+                Already Applied
+              </button>
+            ) : (
+              <button
+                className="job-description__apply-btn"
+                onClick={handleApplyClick}
+              >
+                Apply Now
+              </button>
+            )}
             <button
               className="job-description__close-details-btn"
               onClick={onClose}

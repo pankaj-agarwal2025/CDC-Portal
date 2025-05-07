@@ -286,7 +286,7 @@ const AdminInterviewManagement = ({
                   >
                     <option value="Accepted">Accepted</option>
                     <option value="Declined">Declined</option>
-                    <option value="No Offer">No Offer</option>
+                    <option value="No Selected">No Selected</option>
                   </select>
                 </div>
                 <div className="form-group">

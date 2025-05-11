@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { useSelector, useDispatch } from "react-redux";
 import { fetchUser } from "./redux/authSlice";
 
-// Import Pages
 import LandingPage from "./pages/LandingPage";
 import AuthContainer from "./pages/loginPage/AuthContainer";
 import StudentDetails from "./pages/studentform/StudentDetails";
@@ -28,30 +27,25 @@ function App() {
   const dispatch = useDispatch();
   const { user, isAuthenticated, loading } = useSelector((state) => state.auth);
 
-  // Automatically Fetch User Data on App Load
   useEffect(() => {
     if (!user && localStorage.getItem("token")) {
       dispatch(fetchUser());
     }
   }, [dispatch, user]);
 
-  // Show Loader Until User Data is Fetched
   if (loading && localStorage.getItem("token")) {
     return <div style={{ textAlign: 'center', marginTop: '100px' }}>Loading...</div>;
   }
 
-  // Handle Unauthorized Access Gracefully
   const redirectToDashboard = () => {
     if (!isAuthenticated && !localStorage.getItem("token")) {
       return <Navigate to="/auth-Container" />;
     }
     
-    // If we have a token but state is loading or user is not loaded yet
     if ((loading || !user) && localStorage.getItem("token")) {
       return <div style={{ textAlign: 'center', marginTop: '100px' }}>Loading...</div>;
     }
     
-    // Redirect based on user role
     if (user && user.role) {
       switch(user.role) {
         case 'admin':

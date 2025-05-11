@@ -568,7 +568,7 @@ const AdminJobManagement = () => {
         {viewModalOpen && currentJob && (
           <div className="job-description-overlay">
             <div className="job-description__container">
-              <button className="job-description__close-btn" onClick={closefluoroModal}>×</button>
+              <button className="job-description__close-btn" onClick={closeModal}>×</button>
               <div className="job-description__header2">
                 <h1 className="job-title-head2">{currentJob.profiles}</h1>
                 <div className="job-header-details2">

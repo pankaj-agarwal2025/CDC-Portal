@@ -28,14 +28,11 @@ const ProfilePage = () => {
   const getUrl = (path) => {
     if (!path) return null;
 
-    // If it's already a URL (containing http), we need to parse and fix it
     if (typeof path === "string") {
       if (path.startsWith("http")) {
-        // Fix the URL if it has a double slash issue
         return path.replace("/api//", "/api/");
       }
 
-      // For paths like "/uploads/filename"
       const cleanPath = path.replace(/^\//, "");
       return `${import.meta.env.VITE_BACKEND_URL.replace(
         /\/$/,
@@ -47,7 +44,7 @@ const ProfilePage = () => {
   };
   const openCertificate = (cert) => {
     if (cert.image) {
-      window.open(`${import.meta.env.VITE_BACKEND_URL}${cert.image}`, "_blank");
+      window.open(`${cert.image}`, "_blank");
     }
   };
 

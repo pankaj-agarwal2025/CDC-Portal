@@ -25,6 +25,22 @@ const AdminUserManagement = ({ fetchUsers, updateUser, deleteUser, changeUserRol
   const [modalUser, setModalUser] = useState(null);
   const API_URL = import.meta.env.VITE_BACKEND_URL;
 
+  // Helper function to get clean URLs
+  const getUrl = (path) => {
+    if (!path) return null;
+
+    if (typeof path === "string") {
+      if (path.startsWith("http")) {
+        return path.replace("/api//", "/api/");
+      }
+
+      const cleanPath = path.replace(/^\//, "");
+      return `${API_URL.replace(/\/$/, "")}/${cleanPath}`;
+    }
+
+    return URL.createObjectURL(path);
+  };
+
   useEffect(() => {
     loadUsers();
   }, [roleFilter, searchTerm]);
@@ -211,6 +227,20 @@ const AdminUserManagement = ({ fetchUsers, updateUser, deleteUser, changeUserRol
 
   const closeUserModal = () => {
     setModalUser(null);
+  };
+
+  const openResume = (resumePath) => {
+    const url = getUrl(resumePath);
+    if (url) {
+      window.open(url, "_blank");
+    }
+  };
+
+  const openCertificate = (cert) => {
+    const url = getUrl(cert.image);
+    if (url) {
+      window.open(url, "_blank");
+    }
   };
 
   const formatDate = (date) => {
@@ -524,24 +554,22 @@ const AdminUserManagement = ({ fetchUsers, updateUser, deleteUser, changeUserRol
           <div className="modal-content">
             <div className="modal-header">
               <h3>{modalUser.role === "student" ? "Student Profile" : "User Details"}</h3>
-              {modalUser.profilePhoto ? (
-                <div className="profile-photo-container">
+              <div className="profile-photo-container">
+                {modalUser.profilePhoto ? (
                   <img
-                    src={`${API_URL.replace(/\/$/, '')}/${modalUser.profilePhoto.replace(/^\/+/, '')}`}
+                    src={getUrl(modalUser.profilePhoto)}
                     alt={`${modalUser.fullName}'s Profile`}
                     className="profile-photo"
                     onError={(e) => (e.target.src = "/default-avatar.png")}
                   />
-                </div>
-              ) : (
-                <div className="profile-photo-container">
+                ) : (
                   <img
                     src="/default-avatar.png"
                     alt="Default Profile"
                     className="profile-photo"
                   />
-                </div>
-              )}
+                )}
+              </div>
             </div>
             <div className="user-details">
               <div className="detail-section">
@@ -617,7 +645,7 @@ const AdminUserManagement = ({ fetchUsers, updateUser, deleteUser, changeUserRol
                       <ul className="certifications-list">
                         {modalUser.certifications.map((cert, index) => (
                           <li key={index}>
-                            {cert.name} {cert.image && <a href={`${API_URL.replace(/\/$/, '')}/${cert.image.replace(/^\/+/, '')}`} target="_blank" rel="noopener noreferrer">[View]</a>}
+                            {cert.name} {cert.image && <a href="#" onClick={() => openCertificate(cert)} rel="noopener noreferrer">[View]</a>}
                           </li>
                         ))}
                       </ul>
@@ -645,8 +673,8 @@ const AdminUserManagement = ({ fetchUsers, updateUser, deleteUser, changeUserRol
                   <div className="detail-section">
                     <h4>Uploads</h4>
                     <div className="uploads-grid">
-                      <p><strong>Resume:</strong> {modalUser.resume ? <a href={`${API_URL.replace(/\/$/, '')}/${modalUser.resume.replace(/^\/+/, '')}`} target="_blank" rel="noopener noreferrer">View Resume</a> : 'Not uploaded'}</p>
-                      <p><strong>Profile Photo:</strong> {modalUser.profilePhoto ? <a href={`${API_URL.replace(/\/$/, '')}/${modalUser.profilePhoto.replace(/^\/+/, '')}`} target="_blank" rel="noopener noreferrer">View Photo</a> : 'Not uploaded'}</p>
+                      <p><strong>Resume:</strong> {modalUser.resume ? <a href="#" onClick={() => openResume(modalUser.resume)} rel="noopener noreferrer">View Resume</a> : 'Not uploaded'}</p>
+                      <p><strong>Profile Photo:</strong> {modalUser.profilePhoto ? <a href="#" onClick={() => openResume(modalUser.profilePhoto)} rel="noopener noreferrer">View Photo</a> : 'Not uploaded'}</p>
                     </div>
                   </div>
 

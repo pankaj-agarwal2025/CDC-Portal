@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { FaSearch } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
 import "./AdminInterviewManagement.css";
 
 const AdminInterviewManagement = ({
@@ -165,15 +166,20 @@ const AdminInterviewManagement = ({
   return (
     <div className="admin-interview-management">
       <h2>Manage Interview Experiences</h2>
-      {/* Search Bar */}
-      <div className="search-bar">
-        <FaSearch className="search-icon" />
-        <input
-          type="text"
-          placeholder="Search by company, role, or author..."
-          value={searchQuery}
-          onChange={handleSearchChange}
-        />
+      {/* Search Bar and Add Experience Button */}
+      <div className="search-bar-container">
+        <div className="search-bar">
+          <FaSearch className="search-icon" />
+          <input
+            type="text"
+            placeholder="Search by company, role, or author..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+        </div>
+        <NavLink to="/submit-interview-experience" className="add-experience-button">
+          Add Experience
+        </NavLink>
       </div>
       {error && <div className="error-message">{error}</div>}
       {loading ? (
